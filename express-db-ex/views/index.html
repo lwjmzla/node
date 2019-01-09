@@ -47,8 +47,10 @@
             <button type="submit" class="btn btn-default">搜索</button>
           </form>
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="login.html">登录</a></li>
-            <li><a href="#">注册</a></li>
+            <!-- <li><a href="/login">登录</a></li>
+            <li><a href="#">注册</a></li> -->
+            <li><a>{{userInfo.name}}</a></li>
+            <li class="logout"><a href="javascript:void(0)">登出</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">相关<span class="caret"></span></a>
               <ul class="dropdown-menu">
@@ -171,5 +173,23 @@
 <!-- Bootstrap JavaScript 文件 -->
 <script src="./static/bootstrap/js/bootstrap.min.js"></script>
 
+<script>
+    $('.logout').click(function() {
+        $.ajax({
+             type: "post",
+             url: "/logout",
+             //data: $('#form').serialize(), // 下面的也可以
+             //data: {name: $('#name').val(), pwd: $('#pwd').val()},
+             dataType: "json",
+             success: function(res){
+                        console.log(res)
+                        if (res.status ===0) {
+                            alert(res.msg)
+                            window.location.href = '/login'
+                        }
+                      }
+         });
+    })
+</script>
 </body>
 </html>

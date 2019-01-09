@@ -45,14 +45,6 @@ app.get('/deleCookie', (req, res) => {
   res.send('删除cookie  d成功')
 })
 
-// let dataDb = {
-//   stus: [
-//     {id: 1, name: '11', pwd: '11', age: 11, sex: '男', create_at: '2017-08-06'},
-//     {id: 2, name: '22', pwd: '22', age: 22, sex: '男', create_at: '2017-08-06'},
-//     {id: 3, name: '33', pwd: '33', age: 33, sex: '男', create_at: '2017-08-06'},
-//   ]
-// }
-
 //设置跨域访问
 app.all('*', function(req, res, next) {
   // console.log(req.headers.origin)
@@ -66,26 +58,8 @@ app.all('*', function(req, res, next) {
   next();
 })
 
-app.use('/', (req, res, next) => { // !app.use 是非完全匹配  反正 当前情况都满足
-  console.log('中间件1')
-  next()
-})
-app.all('*', function(req, res, next) {
-  console.log('中间件2')
-  next();
-})
-// app.get('/', (req, res, next) => {
-//   fs.readFile('xxxx', (err, data) => {
-//     if (err) { 
-//       next(err) // !注意  触发统一错误处理
-//     } else {
-//       res.send('ok')
-//     }
-//   })
-// })
-
 // routerFn(app) // !这种是原来 的app.get(...)  但这种要传参数，下面的不用   但这里也只需传app 其实没什么
-app.use(router) // !app.use('/app',router) 这种就是相当于自动加前缀
+// app.use(router) // !app.use('/app',router) 这种就是相当于自动加前缀
 
 // 404
 app.use(function (req, res, next) { //!其实 就是省略 '/'

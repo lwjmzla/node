@@ -5,6 +5,7 @@ const querystring = require('querystring')
 const postBody = require('body-parser')
 const dayjs = require('dayjs')
 const cookieParser = require('cookie-parser')
+const session = require('express-session')
 
 const mongoose = require('mongoose')
 const dbConfig = require('./dbs/config')
@@ -27,31 +28,29 @@ app.use('/static', express.static('static')) // !当匹配到 /static  自动加
 
 app.use(cookieParser('lwj')) // 相当于 app.use('/', cookieParser('lwj')) 
 
-app.get('/setCookie', (req, res) => {
-  res.cookie('a', 1)
-  res.cookie('b', 2, {maxAge: 60*1000})
-  res.cookie('c', 3, {signed: true})
-  res.cookie('d', 4)
-  res.send('设置cookie成功')
+app.use(session({
+  secret: 'lwj', // 加密存储
+  resave: false, // 客户端并行请求是否覆盖: true 是 false 否
+  saveUninitialized: true // 初始化session存储
+}))
+
+app.get('/setSession', (req, res) => {
+  req.session.a = 1
+  req.session.b = 2
+  req.session.c = 3
+  res.send('设置Session成功')
 })
-app.get('/getCookie', (req, res) => {
+app.get('/getSession', (req, res) => {
   res.json({
-    unsigned: req.cookies,
-    signed: req.signedCookies 
+    a: req.session.a,
+    b: req.session.b,
+    c: req.session.c
   })
 })
-app.get('/deleCookie', (req, res) => {
-  res.clearCookie('d')
-  res.send('删除cookie  d成功')
+app.get('/deleSession', (req, res) => {
+  req.session.c = null
+  res.send('删除Session  c成功')
 })
-
-// let dataDb = {
-//   stus: [
-//     {id: 1, name: '11', pwd: '11', age: 11, sex: '男', create_at: '2017-08-06'},
-//     {id: 2, name: '22', pwd: '22', age: 22, sex: '男', create_at: '2017-08-06'},
-//     {id: 3, name: '33', pwd: '33', age: 33, sex: '男', create_at: '2017-08-06'},
-//   ]
-// }
 
 //设置跨域访问
 app.all('*', function(req, res, next) {
@@ -66,26 +65,8 @@ app.all('*', function(req, res, next) {
   next();
 })
 
-app.use('/', (req, res, next) => { // !app.use 是非完全匹配  反正 当前情况都满足
-  console.log('中间件1')
-  next()
-})
-app.all('*', function(req, res, next) {
-  console.log('中间件2')
-  next();
-})
-// app.get('/', (req, res, next) => {
-//   fs.readFile('xxxx', (err, data) => {
-//     if (err) { 
-//       next(err) // !注意  触发统一错误处理
-//     } else {
-//       res.send('ok')
-//     }
-//   })
-// })
-
 // routerFn(app) // !这种是原来 的app.get(...)  但这种要传参数，下面的不用   但这里也只需传app 其实没什么
-app.use(router) // !app.use('/app',router) 这种就是相当于自动加前缀
+// app.use(router) // !app.use('/app',router) 这种就是相当于自动加前缀
 
 // 404
 app.use(function (req, res, next) { //!其实 就是省略 '/'
