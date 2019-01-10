@@ -13,7 +13,7 @@ https.get('https://www.ku6.com/index', (req, res) => {
   })
   req.on('end', () => {
     //console.log(html)
-    const $ = cheerio.load(html, {decodeEntities: false})
+    const $ = cheerio.load(html, {decodeEntities: false}) // !可以像JQ那样操作html里的元素
     const arrNavliEls = [].slice.call($('#video-container .video-image-warp'))
     let arrVideoPages = []
     arrNavliEls.forEach((item, index) => { // 注意item就是一个DOM而已  记得加上$
@@ -46,7 +46,7 @@ function getVideoUrl (videoPage) {
       //console.log($('video').attr('src')) // !src 不是直接给上去的  用JS 给的。 id就可以获取，注意异步的也获取不了
       //const matchStr = 'flvURL: "'
       //const index = htmlPage.indexOf(matchStr) + matchStr.length
-      //console.log(htmlPage.indexOf('flvURL: "')) // !这里是url的大概位置
+      //console.log(htmlPage.indexOf('flvURL: "')) // !这里是url的大概位置 url在script标签里。。。牛逼
       //console.log(htmlPage.substring(10231,10300))
       let str = htmlPage.substring(10231,10300)
       //console.log(str.lastIndexOf('"'))
