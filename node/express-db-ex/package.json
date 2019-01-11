@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "server": "nodemon app.js"
+  },
+  "devDependencies": {
+    "art-template": "^4.13.2",
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "dayjs": "^1.7.8",
+    "express": "^4.16.4",
+    "express-art-template": "^1.0.1",
+    "express-session": "^1.15.6",
+    "jquery": "^1.12.0",
+    "lwj-info": "^1.0.2",
+    "md5": "^2.2.1",
+    "mime": "^2.4.0",
+    "mongoose": "5.2.8",
+    "nodemon": "^1.18.9"
+  }
+}
