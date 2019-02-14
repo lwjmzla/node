@@ -85,7 +85,7 @@ app.all('*', function(req, res, next) {
 // })
 
 // routerFn(app) // !这种是原来 的app.get(...)  但这种要传参数，下面的不用   但这里也只需传app 其实没什么
-app.use(router) // !app.use('/app',router) 这种就是相当于自动加前缀
+app.use(router) // !app.use('/',router) 这种就是相当于自动加前缀
 
 // 404
 app.use(function (req, res, next) { //!其实 就是省略 '/'

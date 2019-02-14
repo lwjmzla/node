@@ -5,6 +5,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan'); // !日志
 const https = require('https')
 const cheerio = require('cheerio')
+// const axios = require('axios')
+
+// axios.get('https://www.baidu.com/su?wd=a&cb=cb')
+//   .then((res) => {
+//     console.log(res.data)  // ! 可以匹配cb()  xxxx获取数据
+//   })
 
 https.get('https://www.ku6.com/index', (req, res) => {
   let html = ''
