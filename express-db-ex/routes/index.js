@@ -64,6 +64,7 @@ router.post('/add', async (req, res) => {
       sex,
       create_at
     })
+    // console.log(user)  返回这条信息的对象
     if (user) {
       res.redirect('/')
     } else {

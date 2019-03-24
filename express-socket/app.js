@@ -14,6 +14,16 @@ var io = require('socket.io')(server);
 
 let arr = []
 io.on('connection', function (socket) {
+  // console.log(socket.request.url.replace(/.*?\?/, '').split('&').map(v => v.split('=')).reduce((o, [k, v]) => (o[k] = v, o), {}))
+  // console.log(url.parse(socket.request.url, true))
+  let roomid = url.parse(socket.request.url, true).query.roomid
+  socket.join(roomid) // !加入某个房间
+  socket.on('qufen', (data) => {
+    io.to(roomid).emit('qufen', data) // !房间里全部人都有 包含自己
+    // socket.to(roomid).emit('qufen', data) // !房间里除了自己外的都有
+    // socket.broadcast.to(roomid).emit('qufen', data) // !房间里除了自己外的都有
+  })
+  
   socket.emit('news', { hello: 'world' });
   socket.on('my other event', function (data) {
     console.log(data);
@@ -32,7 +42,9 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('online', name);
   });
   socket.on('sendGroupMsg', data => {
+    console.log('收到信息')
     socket.broadcast.emit('receiveGroupMsg', data);
+    // io.emit('receiveGroupMsg', data);
   });
 });
 // server.listen(80);
