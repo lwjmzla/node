@@ -51,4 +51,10 @@ router.get('/api/productlist', async (req, res) => {
   })
 })
 
+router.get('/test', async (req, res) => {
+  res.json({
+    test: 123
+  })
+})
+
 module.exports = router
