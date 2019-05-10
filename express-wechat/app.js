@@ -1,5 +1,6 @@
 const express = require('express')
 const sha1 = require('sha1')
+const axios = require('axios')
 const fs = require('fs')
 const url = require('url')
 const querystring = require('querystring')
@@ -54,8 +55,19 @@ app.use(function(req, res, next) {
     res.end('error')
   }
   
-  // next();
+  next();
 })
+
+axios.get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.appID}&secret=${config.appsecret}`)
+  .then((res) => {
+    console.log(res.data)
+    // { access_token:
+    //   '21_byulOv1OFL73QV7YtdrM3UP6TwVzhMHgFb0qEi4VpxbOSbyaRAUTjFxdZwj4HK3V26BRq5AaKet_nANa_7GdiCrbbTtDzblgAUy75ICYkjLeLAuSdWaC2rZ9fKMF73UfWluIoNaz1cc508GgOMKgAGAKIG',
+    //  expires_in: 7200 }
+  })
+  .catch((err) => {
+    console.log(err)
+  })
 
 app.use(router) // !app.use('/',router) 这种就是相当于自动加前缀
 
