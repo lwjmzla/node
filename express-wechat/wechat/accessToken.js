@@ -1,4 +1,5 @@
 
+//!获取有效的accessToken
 const axios = require('axios')
 const fs = require('fs')
 const config = require('../config/index.js')
@@ -8,7 +9,6 @@ class Wechat {
   async getAccessTokenFromWechatServer () {
     // !也可以用  return new Promise((resolve,reject) => { axios.xxx  resolve对应数据  })
     let {data} = await axios.get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.appID}&secret=${config.appsecret}`)
-    //console.log(data)
     // !自定义提前5分钟到期
     data.expires_in = new Date().getTime() + (data.expires_in - 300) * 1000
     return data
