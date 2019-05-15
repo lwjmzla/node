@@ -1,12 +1,13 @@
 const express = require('express')
-const sha1 = require('sha1')
-const axios = require('axios')
-const fs = require('fs')
+// const sha1 = require('sha1')
+//const axios = require('axios')
+//const fs = require('fs')
 const url = require('url')
 const querystring = require('querystring')
 const postBody = require('body-parser')
 const dayjs = require('dayjs')
 const cookieParser = require('cookie-parser')
+const auth = require('./wechat/auth.js')
 
 const router = require('./routes/index.js')
 
@@ -36,38 +37,10 @@ const config = {
   appID: 'wxe395b6751afb0527',
   appsecret: '05dc1e5e0cd3017b8706242eff8a826d'
 }
+// !微信验证本人服务器有效性  
+app.use(auth())
 
-app.use(function(req, res, next) {
-  console.log(req.query)
-  // { signature: 'afb9b98e74e2eb1e02d0e7794a4f0d555306905f', //微信的加密签名
-  // echostr: '2674559523603047929',  // 微信的随机字符串
-  // timestamp: '1557415288', //
-  // nonce: '205886582' }   //  随机数字
-  const {token} = config
-  const {signature, echostr, timestamp, nonce} = req.query
-  let arr = [timestamp,nonce,token]
-  arr.sort()
-  const sha1Str = sha1(arr.join(''))
-  console.log(sha1Str)
-  if (sha1Str === signature) { // !说明信息来自微信服务器
-    res.send(echostr)
-  } else {
-    res.end('error')
-  }
-  
-  next();
-})
 
-axios.get(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${config.appID}&secret=${config.appsecret}`)
-  .then((res) => {
-    console.log(res.data)
-    // { access_token:
-    //   '21_byulOv1OFL73QV7YtdrM3UP6TwVzhMHgFb0qEi4VpxbOSbyaRAUTjFxdZwj4HK3V26BRq5AaKet_nANa_7GdiCrbbTtDzblgAUy75ICYkjLeLAuSdWaC2rZ9fKMF73UfWluIoNaz1cc508GgOMKgAGAKIG',
-    //  expires_in: 7200 }
-  })
-  .catch((err) => {
-    console.log(err)
-  })
 
 app.use(router) // !app.use('/',router) 这种就是相当于自动加前缀
 
