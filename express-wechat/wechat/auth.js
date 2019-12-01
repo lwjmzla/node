@@ -2,6 +2,9 @@
 const sha1 = require('sha1')
 const config = require('../config/index.js')
 const { getUserDataAsync, parseXML, formatMessage } = require('../utils/tool.js')
+const generateReplyMessage = require('./template.js')
+const generateOptions = require('./reply.js')
+
 // !为什么不直接 module.exports = (req, res, next) => {}  因为这样就不方便在外面传参数 近函数里面
 module.exports = () => {
   return async (req, res, next) => {
@@ -61,40 +64,9 @@ module.exports = () => {
           1、开发者在5秒内未回复任何内容 
           2、开发者回复了异常数据，比如JSON数据、字符串、xml数据有多余空格！！！等
         */
-        let content = '您在说什么，我没听懂'
-        let replyMessage
-        if (message.MsgType ==='text') {
-          if (message.Content === '1') {
-            content = '123'
-          } else if (message.Content === '2') {
-            content = '234'
-          } else if (message.Content.includes('爱')) {
-            content = '我爱你'
-          }
-          replyMessage = `
-            <xml>
-              <ToUserName><![CDATA[${message.FromUserName}]]></ToUserName>
-              <FromUserName><![CDATA[${message.ToUserName}]]></FromUserName>
-              <CreateTime>${new Date().getTime()}</CreateTime>
-              <MsgType><![CDATA[text]]></MsgType>
-              <Content><![CDATA[${content}]]></Content>
-            </xml>
-          `
-        } else if (message.MsgType ==='image') {
-          let MediaId = message.MediaId
-          replyMessage = `
-            <xml>
-              <ToUserName><![CDATA[${message.FromUserName}]]></ToUserName>
-              <FromUserName><![CDATA[${message.ToUserName}]]></FromUserName>
-              <CreateTime>${new Date().getTime()}</CreateTime>
-              <MsgType><![CDATA[image]]></MsgType>
-              <Image>
-                <MediaId><![CDATA[${MediaId}]]></MediaId>
-              </Image>
-            </xml>
-          `
-        }
-        
+        let options = generateOptions(message)
+        let replyMessage = generateReplyMessage(options)
+        console.log(replyMessage)
         res.send(replyMessage)
         // res.end('') // !如果开发者服务器没有返回响应 给微信服务器  微信 会请求三次
       } else {
