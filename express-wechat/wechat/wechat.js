@@ -3,6 +3,7 @@
 const axios = require('axios')
 const fs = require('fs')
 const config = require('../config/index.js')
+const menu = require('./menu.js')
 class Wechat {
   constructor () {
   }
@@ -64,10 +65,37 @@ class Wechat {
   async fetchValidAccessToken () {
     return await this.readAccessTokenFromTxt()
   }
-
+  async createMenu (menu) {
+    try {
+      const {access_token} = await this.fetchValidAccessToken()
+      let url = 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token=' + access_token
+      let {data} = await axios.post(url,menu)
+      console.log(data)
+      if (data.errcode === 0) {
+        console.log('createMenu success')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  async deleteMenu () {
+    try {
+      const {access_token} = await this.fetchValidAccessToken()
+      let url = 'https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=' + access_token
+      let {data} = await axios.get(url)
+      console.log(data)
+      if (data.errcode === 0) {
+        console.log('deleteMenu success')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }
 new Wechat().fetchValidAccessToken().then((res) => {
   console.log(res)
 })
+//new Wechat().deleteMenu() // !记得先删除，才能新增menu
+new Wechat().createMenu(menu)
 // !主要是调用 new Wechat().fetchValidAccessToken().then((res) => {  来获取accessToken
 module.exports = Wechat
