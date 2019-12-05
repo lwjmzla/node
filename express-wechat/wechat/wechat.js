@@ -65,6 +65,46 @@ class Wechat {
   async fetchValidAccessToken () {
     return await this.readAccessTokenFromTxt()
   }
+
+  async getJsapiTicketFromWechatServer () {
+    const {access_token} = await this.fetchValidAccessToken()
+    let {data} = await axios.get(`https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${access_token}&type=jsapi`)
+    // !自定义提前5分钟到期
+    data.expires_in = new Date().getTime() + (data.expires_in - 300) * 1000
+    return data
+  }
+  saveJsapiTicketToTxt (res) {
+    fs.writeFileSync('./jsapiTicket.txt', JSON.stringify(res))
+  }
+  async readJsapiTicketFromTxt () {
+    try {
+      let data = fs.readFileSync('./jsapiTicket.txt').toString()
+      data = JSON.parse(data)
+      if (this.isValidJsapiTicket(data)) {
+        return data
+      } else {
+        let res = await this.getJsapiTicketFromWechatServer()
+        this.saveJsapiTicketToTxt(res)
+        return res
+      }
+    } catch (error) {
+      console.log(error)
+      let res = await this.getJsapiTicketFromWechatServer()
+      this.saveJsapiTicketToTxt(res)
+      return res
+    }
+  }
+  isValidJsapiTicket (data) {
+    if (data.ticket && data.expires_in && new Date().getTime() < data.expires_in) {
+      return true
+    } else {
+      return false
+    }
+  }
+  async fetchValidJsapiTicket () {
+    return await this.readJsapiTicketFromTxt()
+  }
+
   async createMenu (menu) {
     try {
       const {access_token} = await this.fetchValidAccessToken()
@@ -92,10 +132,15 @@ class Wechat {
     }
   }
 }
-new Wechat().fetchValidAccessToken().then((res) => {
-  console.log(res)
-})
+// new Wechat().fetchValidAccessToken().then((res) => {
+//   console.log(res)
+// })
+
+// new Wechat().fetchValidJsapiTicket().then((res) => {
+//   console.log(res)
+// })
+
 //new Wechat().deleteMenu() // !记得先删除，才能新增menu
-new Wechat().createMenu(menu)
+//new Wechat().createMenu(menu)
 // !主要是调用 new Wechat().fetchValidAccessToken().then((res) => {  来获取accessToken
 module.exports = Wechat

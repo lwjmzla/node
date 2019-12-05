@@ -8,6 +8,8 @@ const postBody = require('body-parser')
 const dayjs = require('dayjs')
 const cookieParser = require('cookie-parser')
 const auth = require('./wechat/auth.js')
+const Wechat = require('./wechat/wechat.js')
+const wechatApi = new Wechat()
 
 const router = require('./routes/index.js')
 
@@ -33,12 +35,28 @@ app.all('*',function (req, res, next) {
     next();
   }
 });
+// 配置模板资源目录
+app.set('views','./views')
+// 配置模板引擎
+app.set('view engine', 'ejs')
 
-const config = {
-  token: 'tokenabc123',
-  appID: 'wxe395b6751afb0527',
-  appsecret: '05dc1e5e0cd3017b8706242eff8a826d'
-}
+app.get('/search', (req,res) => {
+  res.render('search')
+})
+
+app.get('/getSignature', async (req,res) => {
+  console.log(1)
+  console.log(req)
+  const noncestr = Math.random().toString().split('.')[1];
+  const timestamp = new Date().getTime();
+  //const {ticket} = await wechatApi.fetchValidJsapiTicket();
+  
+  // 最后返回signature  timestamp  noncestr
+  res.json({
+    signature: 123
+  })
+})
+
 // !微信验证本人服务器有效性  
 app.use(auth()) // !加了这个后 './routes/index.js'的路由不生效了，都被拦截了。
 
