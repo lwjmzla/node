@@ -1,6 +1,7 @@
 
 //!获取有效的accessToken
 const axios = require('axios')
+const path = require('path')
 const fs = require('fs')
 const config = require('../config/index.js')
 const menu = require('./menu.js')
@@ -16,13 +17,13 @@ class Wechat {
   }
   // !其实可以考虑存到数据库的
   saveAccessTokenToTxt (res) {
-    fs.writeFileSync('./accessToken.txt', JSON.stringify(res))
+    fs.writeFileSync(path.join(__dirname, './accessToken.txt'), JSON.stringify(res))
   }
   async readAccessTokenFromTxt () {
     try {
       //! 找到accessToken.txt
       console.log(1)
-      let data = fs.readFileSync('./accessToken.txt').toString() //!把buffer对象转换
+      let data = fs.readFileSync(path.join(__dirname, './accessToken.txt')).toString() //!把buffer对象转换
       // !如果readFileSync  报错，当前代码块剩下的代码就不会执行（data = JSON.parse(data)，return data），直接跳去catch
       data = JSON.parse(data)
       if (this.isValidAccessToken(data)) {
@@ -74,11 +75,11 @@ class Wechat {
     return data
   }
   saveJsapiTicketToTxt (res) {
-    fs.writeFileSync('./jsapiTicket.txt', JSON.stringify(res))
+    fs.writeFileSync(path.join(__dirname, './jsapiTicket.txt'), JSON.stringify(res))
   }
   async readJsapiTicketFromTxt () {
     try {
-      let data = fs.readFileSync('./jsapiTicket.txt').toString()
+      let data = fs.readFileSync(path.join(__dirname, './jsapiTicket.txt')).toString()
       data = JSON.parse(data)
       if (this.isValidJsapiTicket(data)) {
         return data

@@ -1,5 +1,5 @@
 const express = require('express')
-// const sha1 = require('sha1')
+const sha1 = require('sha1')
 //const axios = require('axios')
 //const fs = require('fs')
 const url = require('url')
@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser')
 const auth = require('./wechat/auth.js')
 const Wechat = require('./wechat/wechat.js')
 const wechatApi = new Wechat()
+const config = require('./config/index.js')
 
 const router = require('./routes/index.js')
 
@@ -45,16 +46,42 @@ app.get('/search', (req,res) => {
 })
 
 app.get('/getSignature', async (req,res) => {
-  console.log(1)
-  console.log(req)
-  const noncestr = Math.random().toString().split('.')[1];
-  const timestamp = new Date().getTime();
-  //const {ticket} = await wechatApi.fetchValidJsapiTicket();
+  console.log('-----------')
+  //console.log(Object.keys(req))
+  console.log(req.originalUrl) // /getSignature?myurl=123
+  console.log(req.headers)  // host: '192.168.10.7:3335',
+  console.log(req.query) // { originalUrl: '123' }
+  // console.log(req.query.originalUrl)
+  // const fullAddress = req.protocol + "://" + req.headers.host + req.originalUrl;
+  if (req.query.originalUrl === undefined) {
+    res.json({
+      code: 201,
+      msg: '缺少originalUrl参数'
+    })
+  } else {
+    const noncestr = Math.random().toString().split('.')[1];
+    const timestamp = new Date().getTime();
+    const originalUrl = req.query.originalUrl
+    const {ticket} = await wechatApi.fetchValidJsapiTicket();
+    // todo 完成这个接口  让客户端可以调用  得到下面要的信息。然后客户端 在微信开发工具里能玩耍。
+    const arr = [
+      `noncestr=${noncestr}`,
+      `jsapi_ticket=${ticket}`,
+      `timestamp=${timestamp}`,
+      `url=${originalUrl}`
+    ]
+    // 字典序排序
+    const str = arr.sort().join('&')
+    const signature = sha1(str) // 生成签名
+    res.json({
+      code: 200,
+      signature,
+      timestamp,
+      noncestr,
+      appId: config.appID
+    })
+  }
   
-  // 最后返回signature  timestamp  noncestr
-  res.json({
-    signature: 123
-  })
 })
 
 // !微信验证本人服务器有效性  
