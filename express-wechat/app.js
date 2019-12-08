@@ -101,6 +101,6 @@ app.use('/', function (err, req, res, next) {
   res.end('获取文件失败') // !上面错误的解决方式1.把send改为end   2.在类似的res.send()等函数也要加return  例如在 auth.js 改成return res.end('error') 全部
 })
 
-app.listen(3335, () => {
-  console.log('3335服务已启动')
+app.listen(3336, () => {
+  console.log('3336服务已启动')
 })
