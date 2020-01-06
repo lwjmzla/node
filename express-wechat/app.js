@@ -41,8 +41,26 @@ app.set('views','./views')
 // 配置模板引擎
 app.set('view engine', 'ejs')
 
-app.get('/search', (req,res) => {
-  res.render('search')
+app.get('/search', async (req,res) => {
+  const noncestr = Math.random().toString().split('.')[1];
+  const timestamp = new Date().getTime();
+  const {ticket} = await wechatApi.fetchValidJsapiTicket();
+  // todo 完成这个接口  让客户端可以调用  得到下面要的信息。然后客户端 在微信开发工具里能玩耍。
+  const arr = [
+    `noncestr=${noncestr}`,
+    `jsapi_ticket=${ticket}`,
+    `timestamp=${timestamp}`,
+    `url=http://970c422e.ngrok.io/search`
+  ]
+  // 字典序排序
+  const str = arr.sort().join('&')
+  const signature = sha1(str) // 生成签名
+  res.render('search', {
+    signature,
+    timestamp,
+    noncestr,
+    appId: config.appID
+  })
 })
 
 app.get('/getSignature', async (req,res) => {
