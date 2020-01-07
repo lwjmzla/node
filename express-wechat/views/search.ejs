@@ -9,11 +9,31 @@
     <div id="app">
       404
     </div>
-    <script src="https://cdn.bootcss.com/zepto/1.0rc1/zepto.min.js"></script>
+    <!-- <script src="https://cdn.bootcss.com/zepto/1.0rc1/zepto.min.js"></script> -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.0/jquery.min.js"></script>
     <script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
     <script>
+      let appid = '<%= appId %>'
+      if (location.href.indexOf('code') == -1) {
+        window.APPID = '<%= appId %>'
+        var local = location.href
+        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + window.APPID + '&redirect_uri=' + encodeURIComponent(local) + '&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect'
+      }
+      console.log(location.href) // code作为换取access_token的票据，得到code后，多公众号的话可以把当前appid也传给后端，向后端ajax获取openId
+      var urlParams = location.href.replace(/.*?\?/, '').split('&').map(v => v.split('=')).reduce((o, [k, v]) => (o[k] = v, o), {})
+
+      $.ajax({
+        type: 'GET',
+        url: location.origin + '/getOpenid?appid=' + appid + '&code=' + urlParams.code,
+        //data: { appid: window.APPID,code: urlParams.code },
+        dataType: 'json',
+        success: function (data) {
+          console.log(data)
+        }
+      });
+      
       wx.config({
-          debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+          debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
           appId: '<%= appId %>', // 必填，公众号的唯一标识
           timestamp: '<%= timestamp %>', // 必填，生成签名的时间戳
           nonceStr: '<%= noncestr %>', // 必填，生成签名的随机串
@@ -66,7 +86,6 @@
           ], // 需要检测的JS接口列表，所有JS接口列表见附录2,
           success: function(res) {
             console.log(res)
-            alert(1)
           }
         });
 

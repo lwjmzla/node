@@ -10,6 +10,8 @@ const cookieParser = require('cookie-parser')
 const auth = require('./wechat/auth.js')
 const Wechat = require('./wechat/wechat.js')
 const wechatApi = new Wechat()
+const AuthLogin = require('./wechat/authLogin.js')
+const authLoginApi = new AuthLogin()
 const config = require('./config/index.js')
 
 const router = require('./routes/index.js')
@@ -61,6 +63,27 @@ app.get('/search', async (req,res) => {
     noncestr,
     appId: config.appID
   })
+})
+
+app.get('/getOpenid', async (req,res) => {
+  if (req.query.appid === undefined) {
+    res.json({
+      code: 201,
+      msg: '缺少appid参数'
+    })
+  } else if (req.query.code === undefined) {
+    res.json({
+      code: 201,
+      msg: '缺少code参数'
+    })
+  } else {
+    let {appid,code} = req.query
+    const {openid} = await authLoginApi.fetchValidOpenid(appid,code)
+    res.json({
+      code: 200,
+      openid
+    })
+  }
 })
 
 app.get('/getSignature', async (req,res) => {
