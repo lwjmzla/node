@@ -86,6 +86,27 @@ app.get('/getOpenid', async (req,res) => {
   }
 })
 
+app.get('/getUserInfo', async (req,res) => {
+  if (req.query.appid === undefined) {
+    res.json({
+      code: 201,
+      msg: '缺少appid参数'
+    })
+  } else if (req.query.code === undefined) {
+    res.json({
+      code: 201,
+      msg: '缺少code参数'
+    })
+  } else {
+    let {appid,code} = req.query
+    const userInfo = await authLoginApi.fetchValidUserInfo(appid,code)
+    res.json({
+      code: 200,
+      userInfo
+    })
+  }
+})
+
 app.get('/getSignature', async (req,res) => {
   console.log('-----------')
   //console.log(Object.keys(req))

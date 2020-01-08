@@ -68,5 +68,13 @@ class AuthLogin {
     this.code = code
     return await this.readOpenidFromTxt()
   }
+  async fetchValidUserInfo (appid,code) {
+    const {openid,access_token} = await this.fetchValidOpenid(appid,code)
+    // console.log(openid)
+    // console.log(access_token)
+    let {data} = await axios.get(`https://api.weixin.qq.com/sns/userinfo?access_token=${access_token}&openid=${openid}&lang=zh_CN`)
+    console.log(data)
+    return data
+  }
 }
 module.exports = AuthLogin
