@@ -21,8 +21,11 @@
         var local = location.href
         localStorage.setItem('url',local) // http://40724997.ngrok.io/search
         // snsapi_userinfo 主动授权  首次登陆授权，保存相关用户信息 userinfo、openid、appid，下次进入同一个公众号都不用授权了
-        // snsapi_base 静默授权  进入其他公众号，也是用康合的appid获取openid,再用这个openid支付。
-        // 所以其他公众号干嘛要配 https://testyanxuan.kanghehealth.com/#/mall/ORG0000000000001?appid=wxb6d7a20c78ab3b34
+        // snsapi_base 静默授权  如果没进过康合，进入其他公众号，先主动授权获取该公众号对应的用户信息，再用静默授权获取康合公众号的openid，也是用康合的appid获取openid,再用这个openid支付。
+        // 前提  前端写死了自己的appid了。
+        // 首次进入自己的公众号  先授权 localStorage保存相关用户信息 userinfo、openid、appid，下次进入这个公众号都不用授权了
+        // 为什么进入医生或者医生团队 要授权，因为后端需要授权时建立医患关系，辣鸡，导致前端要授权多次，逻辑奇葩，还不如调个接口什么的。
+        // 支付的其实只需要康合的appid然后获取对应的openid，再ajax后端可以获取相关参数支付
         window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + window.APPID + '&redirect_uri=' + encodeURIComponent(local) + '&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect'
       }
       console.log(location.href) // code作为换取access_token的票据，得到code后，多公众号的话可以把当前appid也传给后端，向后端ajax获取openId
