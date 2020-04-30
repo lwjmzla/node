@@ -11,7 +11,7 @@
     "express": "^4.16.4",
     "express-art-template": "^1.0.1",
     "express-session": "^1.15.6",
-    "jquery": "^1.12.0",
+    "jquery": "^3.5.0",
     "lwj-info": "^1.0.2",
     "md5": "^2.2.1",
     "mime": "^2.4.0",
