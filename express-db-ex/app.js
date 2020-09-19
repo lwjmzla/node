@@ -35,6 +35,19 @@ io.on('connection', function (socket) {
 mongoose.connect(dbConfig.dbs,{
   useNewUrlParser:true
 })
+var db = mongoose.connection;
+
+db.on('error', function(error){
+  console.log(error);
+});
+
+db.on('open',function(error){
+  if(error){
+    console.log(error);
+  } else {
+    console.log('connect success.');
+  }
+});
 
 // 配置body-parser
 app.use(postBody.urlencoded({extended:false})) // 解析文本格式数据(application/x-www-form-urlencoded)
