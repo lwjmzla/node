@@ -1,5 +1,6 @@
 module.exports = {
   dbs: 'mongodb://127.0.0.1:27017/express-stu',
+  // !注意linux MongoDB数据库要这样设置  dbs: 'mongodb://root:123456@127.0.0.1:27017/express-stu?authSource=admin',  root:123456 账号密码?authSource=admin
   redis: {
     get host () { // 这种写法 其实相当于  host: '127.0.0.1'
       return '127.0.0.1'
