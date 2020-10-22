@@ -117,5 +117,35 @@ router.post('/logout', async (req, res) => {
 router.get('/register', async (req, res) => {
   res.render('register.html')
 })
-
+router.post('/register', async (req, res) => {
+  const {name, pwd} = req.body
+  const result = await User.find({name}) // 数组 只有一条数据
+  const isExist = result.length
+  if (isExist) {
+    res.json({
+      status: 1,
+      msg: '用户名已存在'
+    })
+  } else {
+    console.log(1)
+    const arrDataDb = await User.find()
+    let id = arrDataDb.length ? arrDataDb.length + 1 : 1
+    console.log(2)
+    const create_at = dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')
+    console.log(3)
+    const user = await User.create({
+      id,
+      name,
+      pwd: md5(pwd),
+      age: '18',
+      sex: '男',
+      create_at
+    })
+    console.log(4)
+    res.json({
+      status: 0,
+      msg: '注册成功'
+    })
+  }
+})
 module.exports = router

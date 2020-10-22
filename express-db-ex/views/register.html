@@ -72,17 +72,17 @@
 
 <!-- 中间内容区局 -->
 <div class="container">
-    <form action="" method="POST">
+    <form id="form">
         <div class="form-group">
             <label for="username">用户名：</label>
-            <input type="text" name="username" id="username" class="form-control" value="">
+            <input type="text" name="name" id="name" class="form-control" value="">
         </div>
         <div class="form-group">
             <label for="password">密码：</label>
-            <input type="password" name="password" id="password" class="form-control" value="">
+            <input type="password" name="pwd" id="pwd" class="form-control" value="">
         </div>
         <div class="form-group">
-            <input type="submit" value="提交" class="btn btn-success">
+            <input type="submit" value="提交" class="btn btn-success submit_btn">
             <input type="reset" value="清空" class="btn btn-danger">
         </div>
     </form>
@@ -99,6 +99,24 @@
 <script src="./static/jquery/jquery.min.js"></script>
 <!-- Bootstrap JavaScript 文件 -->
 <script src="./static/bootstrap/js/bootstrap.min.js"></script>
-
+<script>
+    $('.submit_btn').click(function(ev) {
+        ev.preventDefault()
+        $.ajax({
+             type: "post",
+             url: "/register",
+             data: $('#form').serialize(), // 下面的也可以
+             //data: {name: $('#name').val(), pwd: $('#pwd').val()},
+             dataType: "json",
+             success: function(res){
+                        console.log(res)
+                        if (res.status ===0) {
+                            alert(res.msg)
+                            window.location.href = '/login'
+                        }
+                      }
+         });
+    })
+</script>
 </body>
 </html>
