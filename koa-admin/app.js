@@ -5,6 +5,25 @@ const koaBody = require('koa-body')
 const json = require('koa-json')
 const helmet = require('koa-helmet')
 const statics = require('koa-static')
+const mongoose = require('mongoose')
+const dbConfig = require('./dbs/config')
+
+mongoose.connect(dbConfig.dbs,{
+  useNewUrlParser:true
+})
+var db = mongoose.connection;
+
+db.on('error', function(error){
+  console.log(error);
+});
+
+db.on('open',function(error){
+  if(error){
+    console.log(error);
+  } else {
+    console.log('dbs connect success.');
+  }
+});
 
 const app = new Koa()
 const router = require('./routes/index.js'); // !混合了多个功能的路由了
