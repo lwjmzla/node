@@ -124,4 +124,47 @@ router.get('/getMemberList', async (ctx) => {
     success: true
   }
 });
+
+router.post('/operateMoney', async (ctx) => {
+  const {body} = ctx.request
+  console.log(body)
+  let {
+    memberCode,
+    operateType,
+    remark,
+    operateAmount,
+    amountAfterOperate
+  } = body
+  const createTime = dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  await ConsumeRecord.create({
+    memberCode,
+    operateType,
+    remark,
+    createTime,
+    operateAmount,
+    amountAfterOperate
+  })
+  await Member.where({memberCode}).update({
+    updateTime: createTime,
+    amount: amountAfterOperate
+  })
+  ctx.body = {
+    code: 200,
+    content: null,
+    message: operateType === 'plus' ? '充值成功' : '消费成功',
+    success: true
+  }
+});
+
+router.get('/getConsumeRecord', async (ctx) => {
+  const {query} = ctx.request
+  let {memberCode} = query
+  const result = await ConsumeRecord.find({memberCode}).sort({'createTime':-1})
+  ctx.body = {
+    code: 200,
+    content: result,
+    message: '查找成功',
+    success: true
+  }
+});
 module.exports = router
