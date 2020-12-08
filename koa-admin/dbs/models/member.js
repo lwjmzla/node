@@ -31,6 +31,12 @@ const memberSchema = new Schema({
   updateTime: {
     type: String
   },
+  lastConsumeContent: { // !方便添加数据用
+    type: String
+  },
+  lastConsumeTime: { // !方便添加数据用
+    type: String
+  }
 })
 
 module.exports = mongoose.model('Member', memberSchema)

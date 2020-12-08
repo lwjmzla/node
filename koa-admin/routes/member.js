@@ -41,6 +41,7 @@ router.post('/addMember', async (ctx) => { // router.prefix('/demo1')   http://l
       updateTime: createTime
     })
     if (amount) {
+      remark = remark || '充值'
       await ConsumeRecord.create({
         memberCode,
         operateType: 'plus',
@@ -112,7 +113,24 @@ router.get('/getMemberList', async (ctx) => {
   const allData = await Member.find(searchParams)
   // !skip 跳过多少条，    limit  限制多少条    .sort({'_id':-1}) 排序   .exec(cb);
   let result = await Member.find(searchParams).sort({'updateTime':-1}).skip((pageNo - 1) * pageSize).limit(pageSize)
-
+  // await ConsumeRecord.find({memberCode}).sort({'createTime':-1})
+  // result.forEach(async (item) => { // !注意函数里用await 记得要使用async 否则代码报错，但提示不明显
+  //   let arr = await ConsumeRecord.find({memberCode: item.memberCode, operateType: 'minus'}).sort({'createTime':-1}) // !找到最新消费的数据
+  //   if (arr.length) {
+  //     item.lastConsumeContent = arr[0].remark
+  //     item.lastConsumeTime = arr[0].createTime
+  //   }
+  // })
+  for(let i=0;i<result.length;i++) {
+    let item = result[i]
+    let arr = await ConsumeRecord.find({memberCode: item.memberCode, operateType: 'minus'}).sort({'createTime':-1}) // !找到最新消费的数据
+    if (arr.length) {
+      // !结论：mongodb中使用mongoose取到的对象不能增加Schema以外的属性。https://www.cnblogs.com/fhen/p/5322493.html
+      // !注意 result数据是从Member的Schema得到的，所以不能贸然给对象添加Schema以外的属性,如果需要添加，需要在Schema定义才能成功添加，否则添加无效。
+      item.lastConsumeContent = arr[0].remark 
+      item.lastConsumeTime = arr[0].createTime
+    }
+  }
   let obj = {
     list:result,
     total: allData.length
@@ -136,6 +154,9 @@ router.post('/operateMoney', async (ctx) => {
     amountAfterOperate
   } = body
   const createTime = dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')
+  if (operateType === 'plus' && !remark) {
+    remark = '充值'
+  }
   await ConsumeRecord.create({
     memberCode,
     operateType,
