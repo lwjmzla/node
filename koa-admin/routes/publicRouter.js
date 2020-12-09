@@ -1,6 +1,9 @@
 const Router = require('koa-router');
 const router = new Router();
 const svgCaptcha = require('svg-captcha')
+const dayjs = require('dayjs')
+const Account = require('../dbs/models/account')
+
 
 router.get('/getCaptcha', async (ctx) => {
   const params = ctx.request.query
@@ -18,12 +21,44 @@ router.get('/getCaptcha', async (ctx) => {
   }
 });
 
-// router.post('/post', async (ctx) => { // router.prefix('/demo1')   http://localhost:3000/demo1/post
-//   const {body} = ctx.request
-//   console.log(body)
-//   ctx.body = {
-//     ...body
-//   }
-// });
+let secretAuthCode = 'lwj'
+router.post('/register', async (ctx) => { // router.prefix('/demo1')   http://localhost:3000/demo1/post
+  const {body} = ctx.request
+  console.log(body)
+  let {account,pwd,authCode} = body
+  if (authCode !== secretAuthCode) {
+    ctx.body = {
+      code: 200,
+      content: null,
+      message: '授权码错误',
+      success: false
+    }
+    return
+  }
 
+  const result = await Account.find({account})
+  const isExist = result.length
+  if (isExist) { // !判断账号是否存在
+    ctx.body = {
+      code: 200,
+      content: null,
+      message: '账号已存在',
+      success: false
+    }
+  } else {
+    const createTime = dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')
+    // !await 看是否需要try catch
+    await Account.create({
+      account,
+      pwd,
+      createTime
+    })
+    ctx.body = {
+      code: 200,
+      content: null,
+      message: '创建账号成功',
+      success: true
+    }
+  }
+});
 module.exports = router
