@@ -14,6 +14,9 @@ const memberAccount = new Schema({
     type: String,
     require: true
   },
+  updateTime: {
+    type: String
+  }
 })
 
 module.exports = mongoose.model('Account', memberAccount)

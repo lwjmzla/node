@@ -35,7 +35,7 @@ app.use(koaBody())
 app.use(cors())
 app.use(json({pretty:false, param: 'pretty'})) // !我觉得没什么卵用，默认不 pretty,可以添加参数来pretty  http://localhost:3000/api/api?name=123&age=18&pretty
 
-let whiteList = ['/getCaptcha', '/register', '/login']
+let whiteList = ['/getCaptcha', '/register', '/login', '/modifyPwd']
 app.use(async (ctx,next) => { // !登录状态拦截
   let url = ctx.url || ''
   let header = ctx.request.header;

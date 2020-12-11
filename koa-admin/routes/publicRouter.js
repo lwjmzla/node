@@ -82,6 +82,45 @@ router.post('/register', async (ctx) => {
   }
 });
 
+router.post('/modifyPwd', async (ctx) => {
+  const {body} = ctx.request
+  console.log(body)
+  let {account,pwd,authCode} = body
+  if (authCode !== secretAuthCode) {
+    ctx.body = {
+      code: 200,
+      content: null,
+      message: '授权码错误',
+      success: false
+    }
+    return
+  }
+
+  const result = await Account.find({account})
+  const isExist = result.length
+  if (isExist) { // !判断账号是否存在
+    const createTime = dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')
+    let params = {
+      pwd,
+      updateTime: createTime
+    }
+    await Account.where({account}).update(params)
+    ctx.body = {
+      code: 200,
+      content: null,
+      message: '修改密码成功',
+      success: true
+    }
+  } else {
+    ctx.body = {
+      code: 200,
+      content: null,
+      message: '账号不存在',
+      success: false
+    }
+  }
+});
+
 // todo
 router.post('/login', async (ctx) => {
   const {body} = ctx.request
