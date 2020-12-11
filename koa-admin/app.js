@@ -57,6 +57,6 @@ app.use(async (ctx,next) => { // !登录状态拦截
 
 app.use(router()); // ! 用了require('koa-combine-routers') 里面做了处理，不需要  app.use(router.routes()).use(router.allowedMethods());
 
-app.listen(3000, () => {
+app.listen(3337, () => {
 	console.log('端口3000服务已启动')
 })
